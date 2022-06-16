@@ -7,8 +7,10 @@ class SearchMovie extends Component{
         super(props)
         this.state={
             searchInput:"",
-            searchData:{},
+            searchData:"",
             }
+        //const {renderMovieSearch}= this.props
+        
     }
 
     onChangeSearchInput = event => {
@@ -19,6 +21,7 @@ class SearchMovie extends Component{
 
     componentDidMount(){
         this.getResult();
+        //this.state.searchData.map((item,key)=>(console.log(item)))
     }
 
         
@@ -36,40 +39,55 @@ class SearchMovie extends Component{
         }))
         //console.log(data)
         console.log(...data, "ereg")
+        const result = Object.keys(data).map((key) =>(data)[key]);
+        console.log(result);
         this.setState({
-            searchData:[...data]
-        }) 
+            // ...this.state, 
+             searchData:result
+        })
 
+        console.log(this.state,"defr")
+        // const arrayOfLists = result.map(
+        //     item => <li key={item.movieID}>{item.movieName}</li>
+        //     )
+        // return arrayOfLists;
+        // return(
+        // <select>
+        //     {result.map(item => (
+        //         <option
+        //                 key={item.movieID}>{item.MovieName}</option>
+        //             ))}
+        // </select>
+        // )
     }
+    // componentDidUpdate(){
+    //     this.state.searchData.map((item)=>(console.log(item)))
+    // }
 
-
-    renderDropDown=()=>{
-        const {searchData,searchInput}= this.state
-        let {movieID,movieName} = searchData
-        if (searchInput !==""){
-            return(
-                <select id="value">
-                    <option key={movieID}>{movieName}</option>
-                </select>
-            )
-        }
-       
-    }
-
-
+    
     render(){
         const {searchInput} =  this.state
+        // const {renderMovieSearch}=this.props
+        console.log(this.state,"defr");
+        
         return(
             <>
+                {/* <form onSubmit={this.getResult()}> */}
+                <form>
                 <input 
                     className="search-input"
                     type="text"
                     placeholder="Search Movie Title..."
                     onChange={this.onChangeSearchInput}
                     value={searchInput}
-                    onClick={this.getResult}
-                    onKeyDown={this.renderDropDown()}
+                    onClick={this.getResult} 
                     id="input"/>
+                    {/* <select>
+                        {searchData.length? searchData.map((item,key)=>(
+                                <option key={item.movieID}>{item.MovieName}</option>
+                        )): {renderMovieSearch()}}
+                    </select> */}
+                </form>
             </>
         )
     }
