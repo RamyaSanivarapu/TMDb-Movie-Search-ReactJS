@@ -1,11 +1,7 @@
-/* eslint-disable no-template-curly-in-string */
 import React, {Component} from "react";
-//import SearchMovie from "../SearchMovie";
 import "./index.css";
 let numeral = require("numeral");
 let backDropIMG;
-
-
 class MoviePage extends Component{
     constructor(props){
         super(props)
@@ -13,7 +9,6 @@ class MoviePage extends Component{
             searchInput:"",
             movieID:157336,
             movieData:{},
-           // movieID:568124,568124
         }
     }
 
@@ -30,20 +25,17 @@ class MoviePage extends Component{
     getResult= async (event)=>{
         event.preventDefault();
         const {searchInput}= this.state
-        //console.log(searchInput,"hril")
         if(searchInput!==""){
         let apiUrl=`https://api.themoviedb.org/3/search/movie?query=${searchInput}&api_key=cfe422613b250f702980a3bbf9e90716`
-        //console.log(apiUrl);
         const response = await fetch(apiUrl);
         const fetchedData = await response.json()
-        //console.log(fetchedData)
         const tempArray=[]
         fetchedData.results.forEach((item)=>{
             tempArray.push({movieID:item.id,movieName:item.original_title})
         })
         console.log(tempArray)
         this.setState({ 
-             movieID:tempArray[0].movieID
+             movieID:tempArray[0].movieID,
         })
         }
         
@@ -53,11 +45,9 @@ class MoviePage extends Component{
     getMovieData=async()=>{
         const {movieID} = this.state
         const apiUrl=`https://api.themoviedb.org/3/movie/${movieID}?&api_key=cfe422613b250f702980a3bbf9e90716`;
-        //https://api.themoviedb.org/3/search/movie?query=encanto&api_key=cfe422613b250f702980a3bbf9e90716
 
         const response = await fetch(apiUrl);
         const fetchedData = await response.json()
-       // console.log(fetchedData)
         const updatedData={
                 movieID: fetchedData.id,
                 originalTitle: fetchedData.original_title.toUpperCase(),
@@ -74,7 +64,6 @@ class MoviePage extends Component{
                 revenue: fetchedData.revenue,
                 backDrop: fetchedData.backdrop_path
             }
-            //console.log(updatedData)
             this.setState({
                 movieData : updatedData,
             })
@@ -93,8 +82,7 @@ class MoviePage extends Component{
             date = new Date(movieData.release);
             let releaseDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`,
             totalRevenue=movieData.revenue;
-           backDropIMG = 'https://image.tmdb.org/t/p/original' + movieData.backDrop;
-           //backDropIMG= movieData.backDrop; 
+           backDropIMG = 'https://image.tmdb.org/t/p/original' + movieData.backDrop; 
 
             if (totalRevenue === 'undefined' || totalRevenue === 0) {
                 totalRevenue = NoData
@@ -145,7 +133,6 @@ class MoviePage extends Component{
         if(searchInput!==""){
         this.getMovieData(movieID)  
         }
-
         return(
             <>
             <div className="search-container">
@@ -158,18 +145,15 @@ class MoviePage extends Component{
                         </a>
                     </div>
                     <div className="search-box">
-                        {/* <SearchMovie /> */}
                         <form id="from" onSubmit={this.getResult}>
-                <input 
-                    className="search-input"
-                    type="text"
-                    placeholder="Search Movie Title..."
-                    onChange={this.onChangeSearchInput}
-                    value={searchInput}
-                    // onClick={this.getResult} 
-                    id="input"/>
-                    {/* {this.renderDropDown()} */}
-                </form>
+                            <input 
+                                className="search-input"
+                                type="text"
+                                placeholder="Search Movie Title..."
+                                onChange={this.onChangeSearchInput}
+                                value={searchInput}
+                                id="input"/>
+                        </form>
                     </div>
                     <img src='https://res.cloudinary.com/ramya44/image/upload/v1655298594/forkme_right_green_007200_wfu1el.png' 
                 className="git-image" alt="git"/>
