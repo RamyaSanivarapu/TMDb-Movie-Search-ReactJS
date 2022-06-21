@@ -1,4 +1,6 @@
 import React, {Component} from "react";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import { ThreeDots } from  'react-loader-spinner'
 import "./index.css";
 let numeral = require("numeral");
 let backDropIMG;
@@ -9,6 +11,7 @@ class MoviePage extends Component{
             searchInput:"",
             movieID:157336,
             movieData:{},
+            // isLoading:false,
         }
     }
 
@@ -66,6 +69,7 @@ class MoviePage extends Component{
             }
             this.setState({
                 movieData : updatedData,
+                // isLoading:false,
             })
            
     }
@@ -126,6 +130,10 @@ class MoviePage extends Component{
     componentDidUpdate() {
             document.body.style.backgroundImage = 'url(' + backDropIMG + ')';
     }
+
+    renderLoader=()=>(
+        <ThreeDots color="#00BFFF" height={80} width={80} />
+    )
     
     
     render(){ 
@@ -134,7 +142,7 @@ class MoviePage extends Component{
         this.getMovieData(movieID)  
         }
         return(
-            <>
+            <div className="app-container">
             <div className="search-container">
                 <div className="logo container">
                         <a href="./"
@@ -155,11 +163,9 @@ class MoviePage extends Component{
                                 id="input"/>
                         </form>
                     </div>
-                    <img src='https://res.cloudinary.com/ramya44/image/upload/v1655298594/forkme_right_green_007200_wfu1el.png' 
-                className="git-image" alt="git"/>
              </div>
              <div>
-            {this.renderMovieSearch()}
+                {this.renderMovieSearch()}
             </div>
             <footer>
             <span><a href="/" >Designed &amp; developed by Ramya </a> </span>
@@ -167,7 +173,7 @@ class MoviePage extends Component{
             <span><a href="/" >Developer Google Play Store</a></span>
             <span><a href="/" >Developer Apple App Store</a></span>
           </footer>
-             </>
+             </div>
         )
     }
 }
