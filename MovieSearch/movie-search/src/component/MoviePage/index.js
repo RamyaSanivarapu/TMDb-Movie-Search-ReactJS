@@ -11,7 +11,7 @@ class MoviePage extends Component{
             searchInput:"",
             movieID:157336,
             movieData:{},
-            // isLoading:false,
+            isLoading:false,
         }
     }
 
@@ -19,6 +19,7 @@ class MoviePage extends Component{
         this.setState({
           searchInput: event.target.value,
         })
+
     }
 
     componentDidMount(){
@@ -27,8 +28,12 @@ class MoviePage extends Component{
 
     getResult= async (event)=>{
         event.preventDefault();
+        this.setState({
+            isLoading: true,
+          })
         const {searchInput}= this.state
         if(searchInput!==""){
+        
         let apiUrl=`https://api.themoviedb.org/3/search/movie?query=${searchInput}&api_key=cfe422613b250f702980a3bbf9e90716`
         const response = await fetch(apiUrl);
         const fetchedData = await response.json()
@@ -37,8 +42,10 @@ class MoviePage extends Component{
             tempArray.push({movieID:item.id,movieName:item.original_title})
         })
         console.log(tempArray)
+        // console.log(isLoading)
         this.setState({ 
              movieID:tempArray[0].movieID,
+              isLoading:false
         })
         }
         
@@ -48,7 +55,7 @@ class MoviePage extends Component{
     getMovieData=async()=>{
         const {movieID} = this.state
         const apiUrl=`https://api.themoviedb.org/3/movie/${movieID}?&api_key=cfe422613b250f702980a3bbf9e90716`;
-
+        
         const response = await fetch(apiUrl);
         const fetchedData = await response.json()
         const updatedData={
@@ -69,7 +76,7 @@ class MoviePage extends Component{
             }
             this.setState({
                 movieData : updatedData,
-                // isLoading:false,
+                isLoading:false,
             })
            
     }
@@ -137,7 +144,7 @@ class MoviePage extends Component{
     
     
     render(){ 
-        const {searchInput,movieID}= this.state
+        const {searchInput,movieID, isLoading}= this.state
         if(searchInput!==""){
         this.getMovieData(movieID)  
         }
@@ -165,7 +172,7 @@ class MoviePage extends Component{
                     </div>
              </div>
              <div>
-                {this.renderMovieSearch()}
+                {isLoading ? this.renderLoader(): this.renderMovieSearch()}
             </div>
             <footer>
             <span><a href="/" >Designed &amp; developed by Ramya </a> </span>
