@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import AsyncSelect from "react-select/async";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { ThreeDots } from  'react-loader-spinner'
 import "./index.css";
@@ -8,33 +9,27 @@ class MoviePage extends Component{
     constructor(props){
         super(props)
         this.state={
-            searchInput:"",
+            selectedData:[],
             movieID:157336,
             movieData:{},
             isLoading:false,
         }
     }
 
-    onChangeSearchInput = (event)=> {
+    
+    onChange= selectedData =>{
         this.setState({
-          searchInput: event.target.value,
+            selectedData: selectedData || [],
+            movieID:selectedData.value
         })
-
     }
 
     componentDidMount(){
         this.getMovieData(this.movieID);
     }
 
-    getResult= async (event)=>{
-        event.preventDefault();
-        this.setState({
-            isLoading: true,
-          })
-        const {searchInput}= this.state
-        if(searchInput!==""){
-        
-        let apiUrl=`https://api.themoviedb.org/3/search/movie?query=${searchInput}&api_key=cfe422613b250f702980a3bbf9e90716`
+     getResult= async (inputText, callback)=>{
+        let apiUrl=`https://api.themoviedb.org/3/search/movie?query=${inputText}&api_key=cfe422613b250f702980a3bbf9e90716`
         const response = await fetch(apiUrl);
         const fetchedData = await response.json()
         const tempArray=[]
@@ -43,11 +38,7 @@ class MoviePage extends Component{
         })
         console.log(tempArray)
         // console.log(isLoading)
-        this.setState({ 
-             movieID:tempArray[0].movieID,
-              isLoading:false
-        })
-        }
+        callback(tempArray.slice(0,5).map(item=>({label:item.movieName, value:item.movieID})))
         
     }
 
@@ -136,6 +127,7 @@ class MoviePage extends Component{
         }
     componentDidUpdate() {
             document.body.style.backgroundImage = 'url(' + backDropIMG + ')';
+            document.body.style.backgroundSize=  "cover";
     }
 
     renderLoader=()=>(
@@ -144,10 +136,11 @@ class MoviePage extends Component{
     
     
     render(){ 
-        const {searchInput,movieID, isLoading}= this.state
-        if(searchInput!==""){
-        this.getMovieData(movieID)  
+        const {movieID,isLoading,selectedData}= this.state
+        if(selectedData!==""){
+            this.getMovieData(movieID)  
         }
+
         return(
             <div className="app-container">
             <div className="search-container">
@@ -160,14 +153,29 @@ class MoviePage extends Component{
                         </a>
                     </div>
                     <div className="search-box">
-                        <form id="from" onSubmit={this.getResult}>
-                            <input 
-                                className="search-input"
-                                type="text"
-                                placeholder="Search Movie Title..."
-                                onChange={this.onChangeSearchInput}
-                                value={searchInput}
-                                id="input"/>
+                    <form id="from">
+                                <AsyncSelect 
+                                className="search"
+                                styles={styleSheet}
+                                value={this.state.selectedData}
+                                onChange={this.onChange}
+                                placeholder={"Search Movie TItle..."}
+                                loadOptions={this.getResult}
+                                theme={
+                                    theme=>({
+                                        ...theme,
+                                        borderColor: 'black',
+                                        colors:{
+                                            ...theme.colors,
+                                            primary25:"#00FC87",
+                                            primary:"white",
+                                            neutral0:"#111111",
+                                            neutral90:"white",
+                                        }
+
+                                    })
+                                }
+                                />
                         </form>
                     </div>
              </div>
@@ -196,6 +204,28 @@ function nestedDataToString(nestedData) {
     resultString = nestedArray.join(', '); 
     return resultString;
   };
+
+  const styleSheet = {
+    input:(defaultStyle)=>{
+        return{
+            ...defaultStyle,
+            color:"white"
+        }
+    },
+    singleValue: (provided) => {
+        return{
+        ...provided,
+        color: 'white'
+        }
+  },
+  dropdownIndicator:(defaultStyle)=>{
+        return{
+            ...defaultStyle,
+            color:"transparent"
+        }
+  },
+}
+
 
 
 export default MoviePage
